@@ -1,95 +1,162 @@
+peminjaman.php
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Halaman Update Data Peminjaman</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peminjaman</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Inknut Antiqua;
+            background-color: #101010;
+        }
+        #navbar-container {
+            background-color: rgb(85, 6, 6);
+            margin-bottom: 20px;
+        }
+        .navbar-brand {
+            color: white !important;
+            display: flex;
+            align-items: center;
+        }
+        .navbar-brand i {
+            margin-right: 10px;
+        }
+        .form-inline {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .form-inline .form-control {
+            flex: 1;
+            max-width: 600px;
+            border-top-left-radius: 25px;
+            border-bottom-left-radius: 25px;
+        }
+        .form-inline .btn {
+            margin-left: -1px;
+            border-top-right-radius: 25px;
+            border-bottom-right-radius: 25px;
+            background-color: rgb(85, 6, 6);
+            color: white;
+        }
+        .row {
+            color: black;
+            background-color: white;
+            margin-top: 20px;
+        }
+        .table {
+            width: 100%;
+            margin-top: 20px;
+        }
+        .table th {
+            background-color: #6c757d;
+            color: white;
+            text-align: center;
+        }
+        .table td {
+            text-align: center;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 70px;
+        }
+        .action-buttons .btn {
+            margin-left: 10px;
+        }
+        .btn-white-black {
+            background-color: white;
+            color: black;
+            border: 1px solid black;
+        }
+    </style>
 </head>
 <body>
-    <?php
-    include "config.php";
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
-
-    // Ambil customer_id dari parameter GET
-    if (isset($_GET['peminjaman_id'])) {
-        $peminjaman_id = $_GET['peminjaman_id'];
-
-        // Query untuk mengambil data customer berdasarkan customer_id
-        $sql = "SELECT * FROM peminjaman WHERE peminjaman_id=?";
-        $stmt = mysqli_prepare($config, $sql);
-
-        if ($stmt) {
-            mysqli_stmt_bind_param($stmt, "i", $peminjaman_id);
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
-
-            // Periksa apakah data ditemukan
-            if ($result && mysqli_num_rows($result) > 0) {
-                $data = mysqli_fetch_assoc($result);
-            } else {
-                echo "Data peminjaman tidak ditemukan.";
-                exit;
-            }
-
-            mysqli_stmt_close($stmt);
-        } else {
-            echo "Failed to prepare statement. Error: " . mysqli_error($config);
-        }
-    } else {
-        echo "ID supplier tidak ditemukan.";
-        exit;
-    }
-    ?>
-
-    <h3>Update Tabel Data Peminjaman</h3>
-    <form method="POST" action="DataPeminjaman_action.php">
-        <table>
-            <tr>
-                <td>Peminjaman id</td>
-                <td>:</td>
-                <td><input type="number" name="peminjamanid" value="<?php echo $data['peminjaman_id'] ?>" readonly></td>
-            </tr>
-            <tr>
-                <td>Customer id</td>
-                <td>:</td>
-                <td><input type="number" name="customerid" value="<?php echo $data['customer_id'] ?>" readonly></td>
-            </tr>
-            <tr>
-                <td>Barang id</td>
-                <td>:</td>
-                <td><input type="number" name="barangid" value="<?php echo $data['barang_id'] ?>" readonly></td>
-            </tr>
-            <tr>
-                <td>Tanggal Reservasi</td>
-                <td>:</td>
-                <td><input type="date" name="tanggalreservasi" value="<?php echo $data['tanggal_reservasi'] ?>"></td>
-            </tr>
-            <tr>
-                <td>Tanggal Pinjam</td>
-                <td>:</td>
-                <td><input type="date" name="tanggalpinjam" value="<?php echo $data['tanggal_pinjam'] ?>"></td>
-            </tr>
-            <tr>
-                <td>Jumlah</td>
-                <td>:</td>
-                <td><input type="number" name="jumlah" value="<?php echo $data['jumlah'] ?>"></td>
-            </tr>
-            <tr>
-                <td>Total Harga</td>
-                <td>:</td>
-                <input type="number" step="0.01" name="totalharga" value="<?php echo $data['total_harga'] ?>">
-            </tr>
-            <tr>
-                <td>Kondisi Awal</td>
-                <td>:</td>
-                <td><input type="text" name="kondisiawal" value="<?php echo $data['kondisiawal'] ?>"></td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <input type="submit" name="ubah" value="Simpan">
-                    <input type="reset" value="Batal">
-                </td>
-            </tr>
-        </table>
+    <div class="container-fluid" id="navbar-container">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-home"></i>
+                <i class="fas fa-shopping-cart"></i>
+                Peminjaman
+            </a>
+        </nav>
+    </div>
+    <form class="form-inline my-4 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search...." aria-label="Search">
+        <button class="btn my-2 my-sm-0" type="submit">
+            <i class="fas fa-search"></i>
+        </button>
     </form>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <form id="dataForm" action="peminjaman_hapus.php" method="post">
+                    <table class="table table-striped">
+                         <thead>
+                            <tr>
+                                <th><input type="checkbox" id="select-all"></th>
+                                <th>peminjaman_id</th>
+                                <th>customer_id</th>
+                                <th>barang_id</th>
+                                <th>tanggal_reservasi</th>
+                                <th>tanggal_pinjam</th>
+                                <th>jumlah</th>
+                                <th>total_harga</th>
+                                <th>kondisi_awal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            include "config.php";
+
+                            $sql = "SELECT peminjaman_id, customer_id, barang_id, tanggal_reservasi, tanggal_pinjam, jumlah, total_harga, kondisi_awal FROM peminjaman ORDER BY peminjaman_id";
+                            $hasil = mysqli_query($config, $sql);
+
+                            if (!$hasil) {
+                                echo "Error: " . mysqli_error($config);
+                            }
+
+                            while ($data = mysqli_fetch_array($hasil)) {
+                            ?>
+                            <tr>
+                                <td><input type="checkbox" name="selected[]" value="<?php echo $data['peminjaman_id']; ?>"></td>
+                                <td><?php echo $data['peminjaman_id']; ?></td>
+                                <td><?php echo $data['customer_id']; ?></td>
+                                <td><?php echo $data['barang_id']; ?></td>
+                                <td><?php echo $data['tanggal_reservasi']; ?></td>
+                                <td><?php echo $data['tanggal_pinjam']; ?></td>
+                                <td><?php echo $data['jumlah']; ?></td>
+                                <td><?php echo $data['total_harga']; ?></td>
+                                <td><?php echo $data['kondisi_awal']; ?></td>
+                            </tr>
+                            <?php
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+        <div class="action-buttons">
+            <button class="btn btn-white-black" onclick="document.getElementById('dataForm').action='create.php'; document.getElementById('dataForm').submit();">Create</button>
+            <button class="btn btn-white-black" onclick="document.getElementById('dataForm').action='UpdatePeminjaman.php'; document.getElementById('dataForm').submit();">Update</button>
+            <button class="btn btn-danger" onclick="document.getElementById('dataForm').action='peminjaman_hapus.php'; document.getElementById('dataForm').submit();">Delete</button>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('select-all').onclick = function() {
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            for (var checkbox of checkboxes) {
+                checkbox.checked = this.checked;
+            }
+        }
+    </script>
 </body>
 </html>
