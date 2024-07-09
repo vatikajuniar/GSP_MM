@@ -19,26 +19,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = mysqli_real_escape_string($conn, $_POST['password']);
     
     // Hashing password sebelum menyimpannya
-    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    // $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
     // Menambahkan tanggal login saat ini
     $tanggal_login = date("Y-m-d H:i:s");
 
     // Query SQL untuk memasukkan data pengguna ke tabel admin
-    $sql = "INSERT INTO admin (username, password, tanggal_login) VALUES ('$user', '$hashed_password', '$tanggal_login')";
+    $sql = "INSERT INTO admin (username, password, tanggal_login) VALUES ('$user', '$password', '$tanggal_login')";
 
     if (mysqli_query($conn, $sql)) {
-        echo "Pendaftaran berhasil";
+        header("Location: ../../login/login");
     } else {
         echo "Error: " . $sql . "<br>" . mysqli_error($conn);
     }
-
-    // Debugging: Menampilkan nilai yang dimasukkan
-    echo "<br>Debugging Info:<br>";
-    echo "Username: $user<br>";
-    echo "Password: $password<br>";
-    echo "Hashed Password: $hashed_password<br>";
-    echo "Tanggal Login: $tanggal_login<br>";
 
     mysqli_close($conn);
 } else {

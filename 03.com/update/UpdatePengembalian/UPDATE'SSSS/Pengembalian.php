@@ -1,11 +1,9 @@
-peminjaman.php
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Peminjaman</title>
+    <title>Pengembalian</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
@@ -82,7 +80,7 @@ peminjaman.php
             <a class="navbar-brand" href="#">
                 <i class="fas fa-home"></i>
                 <i class="fas fa-shopping-cart"></i>
-                Peminjaman
+                Pengembalian
             </a>
         </nav>
     </div>
@@ -95,26 +93,23 @@ peminjaman.php
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <form id="dataForm" action="peminjaman_hapus.php" method="post">
+                <form id="dataForm" action="pengembalian_hapus.php" method="post">
                     <table class="table table-striped">
                          <thead>
                             <tr>
                                 <th><input type="checkbox" id="select-all"></th>
+                                <th>pengembalian_id</th>
                                 <th>peminjaman_id</th>
-                                <th>customer_id</th>
-                                <th>barang_id</th>
-                                <th>tanggal_reservasi</th>
-                                <th>tanggal_pinjam</th>
-                                <th>jumlah</th>
-                                <th>total_harga</th>
-                                <th>kondisi_awal</th>
+                                <th>tanggal_kembali</th>
+                                <th>kondisi_akhir</th>
+                                <th>denda</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
                             include "config.php";
 
-                            $sql = "SELECT peminjaman_id, customer_id, barang_id, tanggal_reservasi, tanggal_pinjam, jumlah, total_harga, kondisi_awal FROM peminjaman ORDER BY peminjaman_id";
+                            $sql = "SELECT * FROM pengembalian ORDER BY pengembalian_id";
                             $hasil = mysqli_query($config, $sql);
 
                             if (!$hasil) {
@@ -124,15 +119,12 @@ peminjaman.php
                             while ($data = mysqli_fetch_array($hasil)) {
                             ?>
                             <tr>
-                                <td><input type="checkbox" name="selected[]" value="<?php echo $data['peminjaman_id']; ?>"></td>
-                                <td><?php echo $data['peminjaman_id']; ?></td>
-                                <td><?php echo $data['customer_id']; ?></td>
-                                <td><?php echo $data['barang_id']; ?></td>
-                                <td><?php echo $data['tanggal_reservasi']; ?></td>
-                                <td><?php echo $data['tanggal_pinjam']; ?></td>
-                                <td><?php echo $data['jumlah']; ?></td>
-                                <td><?php echo $data['total_harga']; ?></td>
-                                <td><?php echo $data['kondisi_awal']; ?></td>
+                                <td><input type="checkbox" class="checkbox-item" value="<?= $data['pengembalian_id']; ?>" name="pengembalian_id[]"></td>
+                                <td><?= $data['pengembalian_id']; ?></td>
+                                <td><?= $data['peminjaman_id']; ?></td>
+                                <td><?= $data['tanggal_kembali']; ?></td>
+                                <td><?= $data['kondisi_Akhir']; ?></td>
+                                <td><?= $data['denda']; ?></td>
                             </tr>
                             <?php
                             }
@@ -144,19 +136,42 @@ peminjaman.php
         </div>
         <div class="action-buttons">
             <button class="btn btn-white-black" onclick="document.getElementById('dataForm').action='create.php'; document.getElementById('dataForm').submit();">Create</button>
-            <button class="btn btn-white-black" onclick="document.getElementById('dataForm').action='UpdatePeminjaman.php'; document.getElementById('dataForm').submit();">Update</button>
-            <button class="btn btn-danger" onclick="document.getElementById('dataForm').action='peminjaman_hapus.php'; document.getElementById('dataForm').submit();">Delete</button>
+            <button class="btn btn-white-black" id='btn-update'>Update</button>
+            <button class="btn btn-danger" onclick="document.getElementById('dataForm').action='pengembalian_hapus.php'; document.getElementById('dataForm').submit();">Delete</button>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    
     <script>
         document.getElementById('select-all').onclick = function() {
-            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            for (var checkbox of checkboxes) {
-                checkbox.checked = this.checked;
-            }
+        var checkboxes = document.querySelectorAll('.checkbox-item');
+        for (var checkbox of checkboxes) {
+            checkbox.checked = this.checked;
         }
+        }
+
+        let checkboxes = document.querySelectorAll('.checkbox-item');
+        let btnUpdate = document.getElementById('btn-update');
+        let pengembalianID;
+
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('click', function() {
+                if (this.checked) {
+                    pengembalianID = this.value;
+                }else{
+                    pengembalianID = null;
+                }
+            });
+        });
+
+
+        btnUpdate.addEventListener('click', function() {
+            if (pengembalianID) {
+                document.getElementById('dataForm').action = 'UpdatePengembalian.php?pengembalian_id=' + pengembalianID;
+                document.getElementById('dataForm').submit();
+            }
+        });
     </script>
 </body>
 </html>

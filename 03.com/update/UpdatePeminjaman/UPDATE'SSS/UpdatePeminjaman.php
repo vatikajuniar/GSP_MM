@@ -1,3 +1,51 @@
+<?php
+    include 'config.php';
+
+    if(isset($_GET['peminjaman_id'])) {
+        $peminjamanid = $_GET['peminjaman_id'];
+
+        $sql = "SELECT * FROM peminjaman WHERE peminjaman_id = ?";
+        $stmt = mysqli_prepare($config, $sql);
+        mysqli_stmt_bind_param($stmt, "i", $peminjamanid);
+        mysqli_stmt_execute($stmt);
+
+        $result = mysqli_stmt_get_result($stmt);
+        $data = mysqli_fetch_assoc($result);
+
+        // Memeriksa apakah data ditemukan
+        if (!$data) {
+            echo "Data peminjaman tidak ditemukan.";
+        }
+
+    } else {
+        echo "Parameter peminjaman_id tidak ditemukan.";
+    }
+
+    if(isset($_POST['ubah'])) {
+        $peminjamanid = $_POST['peminjamanid'];
+        $customerid = $_POST['customerid'];
+        $barangid = $_POST['barangid'];
+        $tanggalreservasi = $_POST['tanggalreservasi'];
+        $tanggalpinjam = $_POST['tanggal_pinjam'];
+        $jumlah = $_POST['jumlah'];
+        $totalharga = $_POST['total_harga'];
+        $kondisiawal = $_POST['kondisi_awal'];
+
+        $sql = "UPDATE peminjaman SET customer_id = ?, barang_id = ?, tanggal_reservasi = ?, tanggal_pinjam = ?, jumlah = ?, total_harga = ?, kondisi_awal = ? WHERE peminjaman_id = ?";
+        $stmt = mysqli_prepare($config, $sql);
+        mysqli_stmt_bind_param($stmt, "sssssssi", $customerid, $barangid, $tanggalreservasi, $tanggalpinjam, $jumlah, $totalharga, $kondisiawal, $peminjamanid);
+        mysqli_stmt_execute($stmt);
+
+        if( mysqli_stmt_affected_rows($stmt) > 0) {
+            header("Location: Peminjaman.php");
+        }   
+
+        mysqli_stmt_close($stmt);
+        mysqli_close($config);
+    }
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,58 +94,59 @@
         </nav>
     </div>
     <div class="container">
-        <form method="POST" action="DataPeminjaman_action.php">
+        <form method="POST" action="#">
             <div class="form-group row">
                 <label for="peminjaman-id" class="col-sm-2 col-form-label">Peminjaman ID:</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="peminjaman-id" name="peminjamanid" placeholder="Enter Peminjaman ID">
+                    <input type="text" class="form-control" id="peminjaman-id" name="peminjamanid" placeholder="Enter Peminjaman ID" value="<?= $data['peminjaman_id'] ?>">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="customer-id" class="col-sm-2 col-form-label">Customer ID:</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="customer-id" name="customerid" placeholder="Enter Customer ID">
+                    <input type="text" class="form-control" id="customer-id" name="customerid" placeholder="Enter Customer ID" value="<?= $data['customer_id'] ?>">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="barang-id" class="col-sm-2 col-form-label">Barang ID:</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="barang-id" name="barangid" placeholder="Enter Barang ID">
+                    <input type="text" class="form-control" id="barang-id" name="barangid" placeholder="Enter Barang ID" value="<?= $data['barang_id'] ?>">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="tanggal-reservasi" class="col-sm-2 col-form-label">Tanggal Reservasi:</label>
                 <div class="col-sm-10">
-                    <input type="date" class="form-control" id="tanggal-reservasi" name="tanggalreservasi">
+                    <input type="date" class="form-control" id="tanggal-reservasi" name="tanggalreservasi" value="<?= $data['tanggal_reservasi'] ?>">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="tanggal-peminjaman" class="col-sm-2 col-form-label">Tanggal Peminjaman:</label>
                 <div class="col-sm-10">
-                    <input type="date" class="form-control" id="tanggal-peminjaman" name="tanggal_pinjam" required>
+                    <input type="date" class="form-control" id="tanggal-peminjaman" name="tanggal_pinjam" required value="<?= $data['tanggal_pinjam'] ?>">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="jumlah" class="col-sm-2 col-form-label">Jumlah:</label>
                 <div class="col-sm-10">
-                    <input type="number" class="form-control" id="jumlah" name="jumlah" placeholder="Enter Jumlah">
+                    <input type="number" class="form-control" id="jumlah" name="jumlah" placeholder="Enter Jumlah" value="<?= $data['jumlah'] ?>">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="total-harga" class="col-sm-2 col-form-label">Total Harga:</label>
                 <div class="col-sm-10">
-                    <input type="number" class="form-control" id="total-harga" name="total_harga" placeholder="Enter Total Harga">
+                    <input type="number" class="form-control" id="total-harga" name="total_harga" placeholder="Enter Total Harga" value="<?= $data['total_harga'] ?>">
                 </div>
             </div>
             <div class="form-group row">
                 <label for="kondisi-awal" class="col-sm-2 col-form-label">Kondisi Awal:</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="kondisi-awal" name="kondisi_awal" placeholder="Enter Kondisi Awal">
+                    <input type="text" class="form-control" id="kondisi-awal" name="kondisi_awal" placeholder="Enter Kondisi Awal" value="<?= $data['kondisi_awal'] ?>">
                 </div>
             </div>
             <div class="form-group row">
                 <div class="col-sm-10 offset-sm-2">
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a class="btn btn-primary" href="Peminjaman.php">Back</a>
+                    <button type="submit" name="ubah" class="btn btn-primary">Save</button>
                 </div>
             </div>
         </form>
