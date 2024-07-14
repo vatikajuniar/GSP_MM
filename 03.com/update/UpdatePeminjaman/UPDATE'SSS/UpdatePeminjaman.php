@@ -1,5 +1,6 @@
 <?php
     include 'config.php';
+    session_start();
 
     if(isset($_GET['peminjaman_id'])) {
         $peminjamanid = $_GET['peminjaman_id'];
@@ -38,8 +39,12 @@
 
         if( mysqli_stmt_affected_rows($stmt) > 0) {
             header("Location: Peminjaman.php");
-        }   
-
+            $_SESSION['message'] = "Data berhasil diperbaharui.";
+            $_SESSION['message_type'] = "success";
+        }  else {
+            $_SESSION['message'] = "Gagal memperbaharui data.";
+            $_SESSION['message_type'] = "danger";
+        }
         mysqli_stmt_close($stmt);
         mysqli_close($config);
     }

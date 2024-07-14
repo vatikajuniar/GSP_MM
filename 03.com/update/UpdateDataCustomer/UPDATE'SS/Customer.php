@@ -1,3 +1,7 @@
+<?php 
+    session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,6 +88,20 @@
             </a>
         </nav>
     </div>
+
+    <?php if (isset($_SESSION['message'])): ?>
+    <div class="alert alert-<?php echo $_SESSION['message_type']; ?> alert-dismissible fade show" role="alert">
+        <?php echo $_SESSION['message']; ?>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <?php 
+        unset($_SESSION['message']);
+        unset($_SESSION['message_type']);
+    ?>
+    <?php endif; ?>
+
     <form class="form-inline my-4 my-lg-0">
         <input class="form-control mr-sm-2" type="search" placeholder="Search...." aria-label="Search">
         <button class="btn my-2 my-sm-0" type="submit">
